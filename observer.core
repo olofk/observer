@@ -34,6 +34,7 @@ filesets:
 targets:
   cyc1000: &cyc1000
     default_tool: quartus
+    description : Standard configuration for cyc1000. Supports 3-axis accelerometer, user button and a junction that just prints status
     filesets : [rtl, cyc1000]
     generate : [bcmux3, cyc1000_junctions]
     tools:
@@ -44,10 +45,12 @@ targets:
 
   cyc1000_full:
     <<: *cyc1000
+    description : Maxed out configuration for cyc1000. Supports 3-axis accelerometer, user button and 27 junctions that just send messages
     generate : [bcmux29, dummyprinters]
 
   sim:
     default_tool: verilator
+    description : Simulation target with 29 different junctions
     filesets: [rtl, tb]
     generate : [bcmux29, dummyprinters]
     parameters : [timeout, uart_baudrate, vcd]
