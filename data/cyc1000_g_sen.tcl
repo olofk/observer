@@ -1,0 +1,4 @@
+set_location_assignment PIN_F3 -to spi_g_sen_sclk
+set_location_assignment PIN_D1 -to spi_g_sen_cs_n
+set_location_assignment PIN_G1 -to spi_g_sen_miso
+set_location_assignment PIN_G2 -to spi_g_sen_mosi

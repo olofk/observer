@@ -1,0 +1,133 @@
+CAPI=2:
+
+name : ::observer:0
+
+filesets:
+  rtl:
+    files:
+      - sw/emitter.hex : {file_type : user, copyto : emitter.hex}
+      - rtl/servant_ram_quartus.sv : {file_type : systemVerilogSource}
+      - rtl/collector_gpio.v
+      - rtl/collector_spi.v
+      - rtl/wb2axis.v
+      - rtl/base_mux.v
+      - rtl/base.v
+      - rtl/axis2wb.v
+      - rtl/emitter_mux.v
+      - rtl/emitter.v
+      - rtl/observer.v
+    file_type : verilogSource
+    depend : [simple_spi, servant, verilog-axis]
+
+  cyc1000:
+    files:
+      - data/cyc1000_g_sen.tcl    : {file_type : tclSource}
+      - data/cyc1000_user_btn.tcl : {file_type : tclSource}
+      - data/cyc1000.tcl : {file_type : tclSource}
+      - data/cyc1000.sdc : {file_type : SDC}
+      - rtl/cyc1000_clock_gen.v : {file_type : verilogSource}
+      - rtl/observer_cyc1000.v : {file_type : verilogSource}
+  tb:
+    files:
+      - tb/observer_tb.cpp : {file_type : cppSource}
+
+targets:
+  cyc1000: &cyc1000
+    default_tool: quartus
+    filesets : [rtl, cyc1000]
+    generate : [bcmux3, cyc1000_junctions]
+    tools:
+      quartus:
+        family : Cyclone 10 LP
+        device : 10CL025YU256C8G
+    toplevel : observer_cyc1000
+
+  cyc1000_full:
+    <<: *cyc1000
+    generate : [bcmux29, dummyprinters]
+
+  sim:
+    default_tool: verilator
+    filesets: [rtl, tb]
+    generate : [bcmux29, dummyprinters]
+    parameters : [timeout, uart_baudrate, vcd]
+    tools:
+      verilator:
+        verilator_options : [--trace]
+    toplevel : observer
+
+generate:
+  cyc1000_junctions:
+    generator: junction
+    parameters:
+      user_btn:
+        collector: gpio
+      dummyprint:
+      g_sen:
+        collector: spi
+
+  dummyprinters:
+    generator: junction
+    parameters:
+      user_btn:
+        collector: gpio
+      dummyprint:
+      dummyprint1:
+      dummyprint2:
+      dummyprint3:
+      dummyprint4:
+      dummyprint5:
+      dummyprint6:
+      dummyprint7:
+      dummyprint8:
+      dummyprint9:
+      dummyprint10:
+      dummyprint11:
+      dummyprint12:
+      dummyprint13:
+      dummyprint14:
+      dummyprint15:
+      dummyprint16:
+      dummyprint17:
+      dummyprint18:
+      dummyprint19:
+      dummyprint20:
+      dummyprint21:
+      dummyprint22:
+      dummyprint23:
+      dummyprint24:
+      dummyprint25:
+      dummyprint26:
+      g_sen:
+        collector: spi
+
+  bcmux3:
+    generator: axis_arb_mux
+    parameters :
+      ports : 3
+      name  : bcmux
+
+  bcmux29:
+    generator: axis_arb_mux
+    parameters :
+      ports : 29
+      name  : bcmux
+
+generators:
+  junction:
+    interpreter: python
+    command: sw/junction_gen.py
+
+parameters:
+  timeout:
+    datatype : int
+    paramtype : plusarg
+
+  uart_baudrate:
+    datatype : int
+    description : Treat q output as an UART with the specified baudrate (0 or omitted parameter disables UART decoding)
+    paramtype : plusarg
+
+  vcd:
+    datatype : bool
+    paramtype : plusarg
