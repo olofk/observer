@@ -30,7 +30,7 @@ The purpose of the base is to control the dataflow between the collector and the
 
 ## Emitter
 
-![](base.svg)
+![](emitter.svg)
 
 While the Observer SoC has a junction (collector+base) for each sensor, it uses a common emitter. A packet switched mux is used to arbitrate between all the junctions. Much like the base, the emitter consists of a small SERV SoC with local memory and timer, but with the difference that the emitter receives data from an AXI Stream interface and transmits over UART. The emitter UART is connected to externally to allow the aggregated data to leave the chip.
 
