@@ -134,7 +134,9 @@ module emitter
    servant_gpio gpio
      (.i_wb_clk (i_clk),
       .i_wb_dat (wb_gpio_dat),
+      .i_wb_we  (1'b1),
       .i_wb_cyc (wb_gpio_cyc),
+      .o_wb_rdt (),
       .o_gpio   (o_uart_tx));
 
    axis2wb s2w
