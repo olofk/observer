@@ -6,7 +6,6 @@ filesets:
   rtl:
     files:
       - sw/emitter.hex : {file_type : user, copyto : emitter.hex}
-      - rtl/servant_ram_quartus.sv : {file_type : systemVerilogSource}
       - rtl/collector_gpio.v
       - rtl/collector_spi.v
       - rtl/wb2axis.v

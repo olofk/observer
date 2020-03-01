@@ -125,13 +125,13 @@ module base
 //synthesis translate_on
 `endif
 
-   servant_ram_quartus
+   servant_ram
      #(.memfile (memfile),
        .depth (memsize))
    ram
      (// Wishbone interface
       .i_wb_clk (i_clk),
-      .i_wb_adr (wb_mem_adr[$clog2(memsize)-1:0]),
+      .i_wb_adr (wb_mem_adr[$clog2(memsize)-1:2]),
       .i_wb_cyc (wb_mem_cyc),
       .i_wb_we  (wb_mem_we) ,
       .i_wb_sel (wb_mem_sel),
@@ -141,7 +141,6 @@ module base
 
    servant_timer timer
      (.i_clk    (i_clk),
-      .i_rst    (i_rst),
       .o_irq    (timer_irq),
       .i_wb_cyc (wb_timer_cyc),
       .i_wb_we  (wb_timer_we) ,
@@ -160,7 +159,7 @@ module base
       .o_tvalid (o_tvalid),
       .i_tready (i_tready));
 
-   serv_top
+   serv_rf_top
      #(.RESET_PC (32'h0000_0000))
    cpu
      (
