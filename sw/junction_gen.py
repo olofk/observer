@@ -11,24 +11,30 @@ class JunctionGenerator(Generator):
         files = [{'junctions.v' : {'file_type' : 'verilogSource'}}]
         for name, config in self.config.items():
             collector = None
+            memfile = None
             if config:
                 collector = config.get('collector')
-
+                memfile   = config.get('memfile')
+            if not memfile:
+                memfile = name+'.hex'
             #Clean out old junctions and copy new from observer root
             shutil.rmtree(name, True)
-            shutil.copytree(os.path.join(self.files_root, 'junctions', name),
-                            name)
+            junction_src_dir = os.path.join(self.files_root, 'junctions', name)
+            if os.path.exists(junction_src_dir):
+                shutil.copytree(junction_src_dir, name)
+            else:
+                os.makedirs(name)
 
             #Run Makefile if something needs to be made (e.g. C/asm to hex)
             if os.path.exists(os.path.join(name, 'Makefile')):
                 subprocess.call(['make', '-C', name])
 
             #Create junction toplevel
-            self.junction_top(name, collector)
-            files += [
-                {os.path.join(name, 'junction.v') : {'file_type' : 'verilogSource'}},
-                {os.path.join(name, name+'.hex') : {'file_type' : 'user', 'copyto' : name+'.hex' }},
-            ]
+            self.junction_top(name, collector, memfile)
+            files.append({os.path.join(name, 'junction.v') : {'file_type' : 'verilogSource'}})
+            if os.path.exists(os.path.join(name, memfile)):
+                files.append({os.path.join(name, name+'.hex') : {'file_type' : 'user', 'copyto' : name+'.hex' }})
+
         self.gen_junctions_top(self.config)
         self.add_files(files)
 
@@ -103,7 +109,7 @@ class JunctionGenerator(Generator):
                                muxports))
         junctions.write('junctions.v')
 
-    def junction_top(self, name, collector):
+    def junction_top(self, name, collector, memfile):
         junction_top = VerilogWriter(name)
         junction_top.add(ModulePort('i_clk'  , 'input'))
         junction_top.add(ModulePort('i_rst'  , 'input'))
@@ -187,7 +193,7 @@ class JunctionGenerator(Generator):
         ]
 
         junction_top.add(Instance('base', 'base',
-                                  [Parameter('memfile', '"'+name+'.hex"')],
+                                  [Parameter('memfile', '"'+memfile+'"')],
                                   ports))
 
         junction_top.write(os.path.join(name, 'junction.v'))
