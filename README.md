@@ -1,7 +1,5 @@
 <img align="center" src="observer.svg"/>
 
-# OBSERVER
-
 OBSERVER is a configurable and software-programmable sensor aggregation platform for heterogenous sensors
 
 ## Background
